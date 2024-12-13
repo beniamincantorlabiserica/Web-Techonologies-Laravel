@@ -33,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
     Route::get('/search', [SearchController::class, 'index'])->name('search');
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+
 });
 
 require __DIR__.'/auth.php';
