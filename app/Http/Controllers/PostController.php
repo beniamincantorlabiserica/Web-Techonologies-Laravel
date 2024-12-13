@@ -21,12 +21,14 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'content' => 'required|max:1000',
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'content' => 'required|string|max:1000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        $sanitizedContent = sanitize_input($validated['content']);
+
         $post = auth()->user()->posts()->create([
-            'content' => $validated['content'],
+            'content' => $sanitizedContent,
         ]);
 
         if ($request->hasFile('image')) {

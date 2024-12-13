@@ -10,12 +10,14 @@ class CommentController extends Controller
     public function store(Request $request, Post $post)
     {
         $validated = $request->validate([
-            'content' => 'required|max:500',
+            'content' => 'required|string|max:500',
         ]);
+
+        $sanitizedContent = sanitize_input($validated['content']);
 
         $post->comments()->create([
             'user_id' => auth()->id(),
-            'content' => $validated['content'],
+            'content' => $sanitizedContent,
         ]);
 
         return back();

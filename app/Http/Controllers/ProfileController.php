@@ -29,7 +29,9 @@ class ProfileController extends Controller
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $user->update($validated);
+        $sanitizedData = sanitize_input($validated);
+
+        $user->update($sanitizedData);
 
         if ($request->hasFile('profile_image')) {
             $imagePath = $request->file('profile_image')->store('profile_images', 'public');
