@@ -59,5 +59,5 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['auth', '2fa'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    });
 });
