@@ -18,8 +18,6 @@ npm-debug.log
 yarn-error.log
 /.fleet
 /.idea
+/.nova
 /.vscode
 /.zed
-.env.example
-package-lock.json
-package-lock.json
