@@ -29,12 +29,14 @@ class ProfileController extends Controller
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $user->update($validated);
+        
 
         if ($request->hasFile('profile_image')) {
             $imagePath = $request->file('profile_image')->store('profile_images', 'public');
             $user->update(['profile_image' => $imagePath]);
         }
+
+        $user->update($validated);
 
         return redirect()->route('profile.show', $user);
     }

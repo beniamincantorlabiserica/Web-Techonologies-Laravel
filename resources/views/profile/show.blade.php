@@ -40,12 +40,12 @@
                         <h3 class="text-xl font-semibold mb-2">Posts</h3>
                         @foreach ($posts as $post)
                             <div class="mb-4 p-4 bg-white rounded-lg shadow">
+                            <span class="text-xs text-gray-400">{{ $post->created_at->diffForHumans() }}</span>
                                 <p class="mb-2">{{ $post->content }}</p>
                                 @if ($post->image)
                                     <img src="{{ asset('storage/' . $post->image) }}" alt="Post image" class="mb-2 rounded-lg max-w-full h-auto">
                                 @endif
                                 <div class="flex items-center text-sm text-gray-500">
-                                    <span class="mr-2">{{ $post->created_at->diffForHumans() }}</span>
                                     <span class="mr-2">{{ $post->likes->count() }} {{ Str::plural('like', $post->likes->count()) }}</span>
                                     <span>{{ $post->comments->count() }} {{ Str::plural('comment', $post->comments->count()) }}</span>
                                 </div>

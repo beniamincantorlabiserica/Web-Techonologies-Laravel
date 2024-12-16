@@ -15,12 +15,13 @@
                                 <img src="{{ $post->user->profile_image ? asset('storage/' . $post->user->profile_image) : asset('images/default-avatar.png') }}" alt="{{ $post->user->name }}" class="w-10 h-10 rounded-full mr-2">
                                 <a href="{{ route('profile.show', $post->user) }}" class="font-semibold text-lg">{{ $post->user->name }}</a>
                             </div>
-                            <p class="mb-2">{{ $post->content }}</p>
+                            <span class="text-xs text-gray-400">{{ $post->created_at->diffForHumans() }}</span>
+                            <p class="mb-2 mt-4">{{ $post->content }}</p>
                             @if ($post->image)
                                 <img src="{{ asset('storage/' . $post->image) }}" alt="Post image" class="mb-2 rounded-lg max-w-full h-auto">
                             @endif
                             <div class="flex items-center text-sm text-gray-500">
-                                <span class="mr-2">{{ $post->created_at->diffForHumans() }}</span>
+                               
                                 <span class="mr-2">{{ $post->likes->count() }} {{ Str::plural('like', $post->likes->count()) }}</span>
                                 <span>{{ $post->comments->count() }} {{ Str::plural('comment', $post->comments->count()) }}</span>
                             </div>
