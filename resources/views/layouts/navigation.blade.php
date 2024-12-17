@@ -10,6 +10,31 @@
                     </a>
                 </div>
 
+                <div id="notifications-dropdown" class="dropdown dropdown-end fixed top-4 right-4">
+                    <label tabindex="0" class="btn btn-ghost btn-circle">
+                        <div class="indicator">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <span id="notification-badge" class="badge badge-xs badge-primary indicator-item hidden">0</span>
+                        </div>
+                    </label>
+                    <div tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-80">
+                        <div id="notifications-list" class="max-h-96 overflow-y-auto">
+                            <!-- Notifications will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="notification-banner" class="fixed top-4 right-4 transform translate-x-full transition-transform duration-300 z-50">
+                    <div class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                        <span id="notification-banner-text"></span>
+                    </div>
+                </div>
+
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
@@ -125,3 +150,129 @@
         </div>
     </div>
 </nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let lastNotificationCount = 0;
+    const banner = document.getElementById('notification-banner');
+    let bannerTimeout;
+
+    function showNotificationBanner(notification) {
+        // Clear any existing timeout
+        if (bannerTimeout) {
+            clearTimeout(bannerTimeout);
+            banner.style.transform = 'translateX(100%)';
+        }
+
+        // Set banner text
+        document.getElementById('notification-banner-text').textContent = 
+            `${notification.sender.name} liked your post`;
+
+        // Show banner
+        setTimeout(() => {
+            banner.style.transform = 'translateX(0)';
+        }, 100);
+
+        // Hide banner after 5 seconds
+        bannerTimeout = setTimeout(() => {
+            banner.style.transform = 'translateX(100%)';
+        }, 5000);
+    }
+
+    function fetchNotifications() {
+        fetch('/notifications', {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(response => {
+            if (response.status === 'success') {
+                const notifications = response.data;
+                const badge = document.getElementById('notification-badge');
+                const list = document.getElementById('notifications-list');
+
+                // Check for new notifications
+                if (notifications.length > lastNotificationCount && lastNotificationCount !== 0) {
+                    // Show banner for the newest notification
+                    const newestNotification = notifications[0];
+                    showNotificationBanner(newestNotification);
+                }
+                
+                // Update last notification count
+                lastNotificationCount = notifications.length;
+
+                if (notifications.length > 0) {
+                    badge.textContent = notifications.length;
+                    badge.classList.remove('hidden');
+                    list.innerHTML = notifications.map(notification => `
+                        <div class="notification-item p-2 hover:bg-base-200 rounded-lg mb-2">
+                            <p class="text-sm">
+                                <strong>${notification.sender.name}</strong> liked your post
+                                <span class="text-xs text-gray-500">
+                                    ${new Date(notification.created_at).toLocaleDateString()}
+                                </span>
+                            </p>
+                            <button
+                                onclick="markAsRead(${notification.id})"
+                                class="btn btn-xs btn-ghost mt-1"
+                            >
+                                Mark as read
+                            </button>
+                        </div>
+                    `).join('');
+                } else {
+                    badge.classList.add('hidden');
+                    list.innerHTML = '<p class="text-sm text-gray-500 p-2">No new notifications</p>';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function markAsRead(notificationId) {
+        fetch(`/notifications/${notificationId}/mark-as-read`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(response => {
+            if (response.status === 'success') {
+                fetchNotifications();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Make markAsRead function globally available
+    window.markAsRead = markAsRead;
+
+    // Fetch notifications every 5 seconds
+    setInterval(fetchNotifications, 5000);
+    
+    // Initial fetch
+    fetchNotifications();
+});
+</script>
