@@ -124,4 +124,53 @@
             </div>
         </div>
     </div>
+    
+    <button id="back-to-top" class="cta-btn" style="display:none;">Back to Top</button>
+
+    <script>
+       
+        const backToTopButton = document.getElementById('back-to-top');
+
+        
+        window.onscroll = function () {
+            if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+                backToTopButton.style.display = 'block';  
+            } else {
+                backToTopButton.style.display = 'none';   
+            }
+        };
+
+        backToTopButton.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+
+    <style>
+        #back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff2d20; 
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            display: none; 
+            cursor: pointer;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #back-to-top:hover {
+            background-color: #e0241d; 
+        }
+
+        #back-to-top {
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #back-to-top.show {
+            opacity: 1;
+        }
+    </style>
 </nav>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Social Media Friendly Face</title>
+    <title>Welcome to GlobaLink</title>
     <style>
         body {
             font-family: 'Open Sans', sans-serif;
@@ -67,7 +67,7 @@
 <body>
 
     <header>
-        <h1>Welcome to Social Media Friendly Face!</h1>
+        <h1>Welcome to GlobaLink!</h1>
         <p>Connect, share, and engage with your friends and the world.</p>
         <div class="cta-btns">
             @guest
@@ -100,8 +100,8 @@
     </section>
 
     <footer>
-        <p>Powered by Social Media Friendly Face - Connect with the world!</p>
-        <p>&copy; 2024 Social Media Friendly Face | All rights reserved.</p>
+        <p>Powered by GlobaLink - Connect with the world!</p>
+        <p>&copy; 2024 GlobaLink| All rights reserved.</p>
     </footer>
 
 </body>
