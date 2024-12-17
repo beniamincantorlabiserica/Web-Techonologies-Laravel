@@ -21,5 +21,6 @@ yarn-error.log
 /.vscode
 /.zed
 .env.example
+.env.testing
 package-lock.json
 package-lock.json
